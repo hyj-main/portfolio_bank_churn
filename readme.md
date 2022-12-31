@@ -1,107 +1,102 @@
 
-
 # Bank churn prediction portfolio
 
 ## 1. Purpose
-
-Predicting salary is useful in two aspects.
-First, when people search for their jobs on job boards such as glassdoor, there are no explicit descriptions on salary, making it hard to make a choice to apply. Even if the exact amount of salary is shown, there is no way to assess whether that amount is legitimate without developing a prediction model.
-Second, from HR's perspective, it is also hard for them to decide the amount of salary based on location of the office, job type, years of experience and so on. Therefore, it is important to predict salary for job seekers and HRs.
+'Customer churn' cab be defined as customers quitting services for various reasons; even including involuntary exit. In bank industry, customer churn may happen when they are not satisfied with bank service, or when they are not able to maintain their bank accounts, which may be associated with factors such as customer's gender, age, credit score, balances and whether being an active member, etc. For banks, it is a key to predict customers who are likely to churn to retain certain level of customer numbers because generally, gaining a new customer is more difficult than preventing them churn out. The main purpose of this project is to identify features of customers who has higher possiblity to churn and obtain business insights to increase retention rate of existing customers.
 
 
 ## 2. Data description
-* jobId: primary key for identifying distinct jobs
-* companyId: unique key for identifying distinct companies
-* jobType: hierarchy levels in jobs ranging from Janitor and  junior to C-level titles
-* degree: level of education such as high school, bachelors, masters etc.
-* major: area of specific study subject such as math and biology.
-* industry: specific part in which a company aims to make profit, such as oil, web and health 
-* yearsExperience: years of job experience shown as an integer starting from 0.
-* milesFromMetropolis: distance between workplace and metropolice area shown as an integer starting from 0
 
+The data was downloaded from a Kaggle website below: 
+
+https://www.kaggle.com/datasets/gauravtopre/bank-customer-churn-dataset
+
+The dataset consists of following features:
+
+* customer_id: Bank account number of customers
+* credit_score: credit score of customers
+* country: Name of countries where customers live in
+* gender: Either Male of Female
+* age: age of customers
+* tenure: The number of years that a customer has been keeping a bank account
+* balance: balance remaining in an account
+* products_number: The number of products a customer purchased from the bank
+* credit_card: Whether a customer possesses a credit card
+* active member: Whether a customer is an active member
 
 
 ## 3. EDA
 This is a summary of EDA. To see the detailed version, please click the following link.
 
-[EDA Jupyter Notebook](https://nbviewer.org/github/hyj-main/portfolio_bank_churn/blob/master/bankchurn_EDA_20221230.html)
+[EDA Jupyter Notebook](https://nbviewer.org/github/hyj-main/portfolio_bank_churn/blob/master/bankchurn_EDA_20221231.html)
 
 
 * a. check missing values for all columns
     - No missing values were found throughout all columns
-* b. check duplicate values
-    - No duplicate data were detected from jobId
 
+* b. Distribution of target variable showed highly unbalnced pattern; most customers did not churn out. This will be considered in the model prediction part. 
 
-* c. Distribution
-    - Distributions of train and test dataset were almost identical. Therefore, overfitting is less likely to occur.
-    - Distribution of salary was a little skewed to the right. When the salary was square-rooted, it got closer to normal distribution, indicating square-rooted version should be more accurate in prediction.
-    - Invalid observations (Criteria for “invalidity”: e.g. negative observation for positive values, characters & numeric values mixed up.)
-        -  5 data points with salaries that were the same or lower than 0, which were excluded from data.
+![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/churn_dist.png)
 
-        - Low job positions with extremelely high salaries
-            - There were 20 Juniors with high salary
-            - Among them, most degrees were in graduate school level (either master or doctoral) which was abnormal because in most cases, graduate school level degrees would result in higher job positions than junior. Therefore, 19 observations were removed from training dataset.
+* c.Correlation between features and target (churn behavior)
+    - 100% of customers with credit score below 400 churned out.
+![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/fig1.png)
 
+    - Across all age groups (bin size = 10), females tended to churn more than males.
+![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/agegroup_gender.png)
 
-![alt text](https://github.com/hyj-main/portfolio_salary_pred/blob/master/image/1_1.png)
+    - Mid-aged customers (40s-50s) tended to churn more than the other groups.
+![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/midvsnonmid.png)
 
-![alt text](https://github.com/hyj-main/portfolio_salary_pred/blob/master/image/1_2.png)
+    - Customers with higher balance tended to churn more.
+![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/balance.png)
 
-![alt text](https://github.com/hyj-main/portfolio_salary_pred/blob/master/image/1_3.png)
+    - Customers who had products more than 3 showed high churn rate. Specifically. when the product nubmer was 4, 100% of customers churned out.
+![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/pnum.png)
 
-
-* d. Correlation between features and target (salary)
-    - JobType was the most prominant feature that showed strongest correlation with salary than any other features. As we can use our common sense, salary increases as the rank in the job increases.
-    - Generally, higher degree results in higher salary but there are little differences in salaries between None and high school degree and among degrees above University level.
-    - Average salaries in education inudstry was the lowest while salaries in oil was the highest across all kind of job types.
-    - Salary showed stronger increment with the years of experience when it was averaged than raw data.
-    - Also, salary by distance between workplace and metropolitan area showed stronger negative correlation when it was averaged.
-
-![alt text](https://github.com/hyj-main/portfolio_salary_pred/blob/master/image/1_4.png)
-
-![alt text](https://github.com/hyj-main/portfolio_salary_pred/blob/master/image/1_7.png)
-
-![alt text](https://github.com/hyj-main/portfolio_salary_pred/blob/master/image/1_9.png)
-
-![alt text](https://github.com/hyj-main/portfolio_salary_pred/blob/master/image/1_10.png)
-
+    - Non-active customers tended to churn more than active customers.
+![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/act.png)
 
 
 ## 4. Feature engineering
 * a. Cateogrical features
-    - Job type and degree were label-encoded with an increasing order in EDA part(e.g. 1 for Janitor, 8 for CEO)
-    - One-Hot-Encoding for major and industry
+    - One-Hot-Encoding for gender
 * b. Numerical features
-    - Maximum salary by major
-    - Maximum salary by industry
-    - Average salary by years of experience
-    - Average salary by distance from metropolitan area
+    - Added a variable that shows whether mid-aged(1) or not(0).
+    - Added age groups with bin size of 10 
     - Standardization of all numerical features
-* c. Target: Data transformation
-    - Square root transformation for target variable to make it closer to normal distribution
 
 
-Mainly, not having a major is highly correlated with low levels of degree (no degree or high school), which is also correlated with becoming a janitor. 
-
-## 5. Model development
+## 5. Model development with OPTUNA
 This is a summary of model development. To see the detailed version, please click the following link.
 
-[Model development Jupyter Notebook](https://github.com/hyj-main/portfolio_salary_pred/blob/master/salary_pred_modeling_optuna.ipynb)
+[Model development Jupyter Notebook](https://github.com/hyj-main/portfolio_bank_churn/blob/master/bankchurn_model_prediction.ipynb)
 
 
-* a. Baseline model with random forest that did not go through feature engineering showed an MSE of 440.40.
-* b. Random forest model with feature engineering showed an MSE of 364.
-* c. XGBoost regression with feature engineering showed an MSE of 356, which was the best model.
+* XGBoost classifer model was chosen becuase as an ensemble tree models combined with weaker models, it shows better classification accuracy. 
+* To handle imbalanced distribution of churn, did not use mere 'accuracy' as an evaluation metrics. Instead, 'AUC' and 'AUCPR' were chosen.
+* Best set of hyperparameters were chosen by optuna. 
+* To prevent a potential over-fitting problem, early stopping option was used.
+* XGBoost classifer with feature engineering showed an AUC score of 0.85 and AUPRC of 0.68, which showed a robust classification performance.
+![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/roc.png)
 
 ## 6. Conclusion
 
-![alt text](https://github.com/hyj-main/portfolio_salary_pred/blob/master/image/1_8.png)
+The following business insights were obtained from EDA and XGBoost Classifer prediction.
 
+- Credit score
+    - From the beginning, not accepting customers with low credit score below 400.
+    - Once the bank accepts a customer, bank could provide alerts that can damage credit score.
 
-Overall, job type, the maximum salary in each industry and the degree were the three most important features to predict salary.
-1) Job type level was the dominantly significant feature. Regardless industry and degree, salary increases as the job hierarchy increases. 
-2) Maximum amount of salary by each industry was the next important feature in predicting salary, which increased from education to finance and oil. Generally, serving jobs can be regarded as the lowest paying job, but it is notable that companies in education industry tend to pay even less than companies in service. Industries related with economic impact such as finance and oil were the ones that pay highest amount of salaries. It indicates people generally are more affected by industries that are directly related with economical factors. 
-3) Academic degree level was the third important feature perhaps because the average salary above university level did not show clear difference. For example, it is a common sense to assume PhD would earn more than MS and Bachelor's degree. However, that was not the case in this job posting data. Whether graduated university or not shows clear difference in salary.
+- Gender and Age
+    - Generally, Mid-aged groups would earn highest income, compared to younger or older groups. Hence it would be crucial to motivate mid-aged groups not to quit bank service.
+    - Active promotions events for mid-aged women might help lowering thier churn rate.
 
-Therefore, when employers want to set up a baseline for a salary for job posting, they can consider job type, industry and whether potential candidates gruadated university. 
+- Balance 
+    - Maintaining customers who have higher balance would be more beneficial to bank management, but it turned out that they are more likey to churn. Therefore, special attention would be necessary to make them stay.
+
+- Products number
+    - Keep the number of products simple as 1 or 2.
+
+- Active member
+    - Bank may create activeness index and monitor periodically to have more customers active. To do so, defining 'being an active member' is the very first step. It can be defined by the amount of balance, the number of transaction during a certain period, number of online access per day, etc.Depending on the definition, the bank may hold an event to reward customers who increase activeness. 
