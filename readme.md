@@ -52,6 +52,7 @@ This is a summary of EDA. To see the detailed version, please click the followin
 ![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/balance.png)
 
     - Customers who had products more than 3 showed high churn rate. Specifically. when the product nubmer was 4, 100% of customers churned out.
+
 ![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/pnum.png)
 
     - Non-active customers tended to churn more than active customers.
@@ -78,6 +79,7 @@ This is a summary of model development. To see the detailed version, please clic
 * Best set of hyperparameters were chosen by optuna. 
 * To prevent a potential over-fitting problem, early stopping option was used.
 * XGBoost classifer with feature engineering showed an AUC score of 0.85 and AUPRC of 0.68, which showed a robust classification performance.
+
 ![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/roc.png)
 
 ## 6. Conclusion
