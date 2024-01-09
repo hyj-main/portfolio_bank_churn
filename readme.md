@@ -4,7 +4,7 @@
 ![alt text](https://github.com/hyj-main/portfolio_bank_churn/blob/master/fig/bank_churn.png)
 
 ## 1. Purpose
-'Customer churn' cab be defined as customers quitting services for various reasons; even including involuntary exit. In bank industry, customer churn may happen when they are not satisfied with bank service, or when they are not able to maintain their bank accounts, which may be associated with factors such as customer's gender, age, credit score, balances and whether being an active member, etc. For banks, it is a key to predict customers who are likely to churn to retain certain level of customer numbers because generally, gaining a new customer is more difficult than preventing them churn out. The main purpose of this project is to identify features of customers who has higher possiblity to churn and obtain business insights to increase retention rate of existing customers.
+'Customer churn' can be defined as customers quitting services for various reasons; even including involuntary exit. In bank industry, customer churn may happen when they are not satisfied with bank service, or when they are not able to maintain their bank accounts, which may be associated with factors such as customer's gender, age, credit score, balances and whether being an active member, etc. For banks, it is a key to predict customers who are likely to churn to retain certain level of customer numbers because generally, gaining a new customer is more difficult than preventing them churn out. The main purpose of this project is to identify features of customers who has higher possiblity to churn and obtain business insights to increase retention rate of existing customers.
 
 
 ## 2. Data description
